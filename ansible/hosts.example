@@ -1,2 +1,2 @@
 [webserver]
-testserver ansible_ssh_host=192.168.56.100 ansible_ssh_port=22 ansible_ssh_user=tboronczyk ansible_ssh_private_key_file=~/.ssh/id_rsa ansible_become_pass=s3cr3t
+linodeserver ansible_ssh_host=192.168.56.100 ansible_ssh_port=22 ansible_ssh_user=tboronczyk ansible_ssh_private_key_file=~/.ssh/id_rsa ansible_become_pass=s3cr3t
