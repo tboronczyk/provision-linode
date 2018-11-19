@@ -1,0 +1,2 @@
+dbpath = /etc/postfix/accounts.sqlite
+query = SELECT destination FROM aliases WHERE source = '%s'

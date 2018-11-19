@@ -1,0 +1,2 @@
+dbpath = /etc/postfix/accounts.sqlite
+query = SELECT (domain || '/' || username || '/') FROM users WHERE domain = '%d' AND username = '%u';
