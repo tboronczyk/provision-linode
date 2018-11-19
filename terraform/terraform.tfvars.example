@@ -1,4 +1,4 @@
-domain = "novjorkio.org"
-authorized_keys = "ssh-rsa AAAAB3Nza..."
+domain = "example.com"
+authorized_keys = "ssh-rsa AAA...=="
 root_pass = "s3cr3t"
-linode_token = "a498..."
+linode_token = "a49b27"
