@@ -1,2 +1,3 @@
 ansible/hosts
 ansible/*.retry
+terraform/terraform.tfvars
