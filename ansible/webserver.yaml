@@ -229,6 +229,11 @@
 
 #    - name: Update SpamAssassin database
 #      command: sa-update
+#
+    - name: Create OpenDKIM directories
+      file:
+        path: /etc/opendkim/keys/{{mydomain}}
+        state: directory
 
     - name: Configure OpenDKIM
       template:
@@ -259,10 +264,6 @@
             dest: "/etc/opendkim/SigningTable"
           }
 
-    - name: Create OpenDKIM keys directory
-      file:
-        path: /etc/opendkim/keys/{{mydomain}}
-        state: directory
 
     - name: Generate OpenDKIM Keys
       command: opendkim-genkey -s mail -d {{mydomain}}
