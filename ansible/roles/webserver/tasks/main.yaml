@@ -1,0 +1,118 @@
+- name: Enable universe
+  apt_repository:
+    repo: "{{item}}"
+  with_items:
+    - deb http://archive.ubuntu.com/ubuntu {{ansible_lsb.codename}} universe
+    - deb http://archive.ubuntu.com/ubuntu {{ansible_lsb.codename}}-security universe
+    - deb http://archive.ubuntu.com/ubuntu {{ansible_lsb.codename}}-updates universe
+
+- name: Add certbot PPA repository
+  apt_repository:
+    repo: ppa:certbot/certbot
+
+- name: Install certbot
+  apt:
+    name: certbot
+
+#- name: Install SSL/TLS certificates
+#  command: certbot certonly --standalone -n --agree-tos -m {{myusername}}@{{mydomain}} --rsa-key-size 4096 -d {{mydomain}},www.{{mydomain}},mail.{{mydomain}}
+
+- name: Add Oracle MySQL repository
+  apt:
+    deb: https://dev.mysql.com/get/mysql-apt-config_0.8.10-1_all.deb
+
+- name: Install MySQL
+  apt:
+    name: mysql-server
+
+- name: Configure MySQL
+  template:
+    src: files/mysql/mysqld.cnf
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Install Apache
+  apt:
+    name: apache2
+
+- name: Install PHP
+  apt:
+    name:
+      - php
+      - php-curl
+      - php-intl
+      - libapache2-mod-php
+
+- name: Install Composer
+  apt:
+    name: composer
+
+- name: Generate a new DH group
+  command: openssl dhparam -out /etc/ssl/private/dhparams_4096.pem 4096
+  args:
+    creates: /etc/ssl/private/dhparams_4096.pem
+
+- name: Enable Apache modules
+  apache2_module:
+    name: "{{item}}"
+  with_items:
+    - headers
+    - rewrite
+    - ssl
+
+- name: Configure Apache
+  template:
+    src: "{{item.src}}"
+    dest: "{{item.dest}}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - {
+        src: "files/apache2/ssl.conf",
+        dest: "/etc/apache2/mods-available/ssl.conf"
+      }
+    - {
+        src: "files/apache2/mydomain.conf",
+        dest: "/etc/apache2/sites-available/{{mydomain}}.conf"
+      }
+
+- name: Create web directory
+  file:
+    path: /var/www/{{mydomain}}/www/public
+    state: directory
+
+- name: Set web directory ownership and permissions
+  file:
+    path: /var/www/{{mydomain}}
+    owner: www-data
+    group: www-data
+    mode: u=rwX,g=rwX,o=rX
+    recurse: yes
+
+- name: Set web directory group sticky bit
+  file:
+    path: /var/www/{{mydomain}}
+    mode: g+s
+
+- name: Enable Apache site
+  command: "{{item}}"
+  with_items:
+    - a2ensite {{mydomain}}
+    - a2dissite 000-default
+
+- name: Restart installed services
+  systemd:
+    enabled: yes
+    state: restarted
+    name: "{{item}}"
+  with_items:
+    - apache2
+    - mysql
+
+- name: Update firewall rules
+  ufw:
+    rule: allow
+    name: Apache Full
