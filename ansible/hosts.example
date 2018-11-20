@@ -1,2 +1,17 @@
-[webserver]
-linodeserver ansible_ssh_host=192.168.56.100 ansible_ssh_port=22 ansible_ssh_user=tboronczyk ansible_ssh_private_key_file=~/.ssh/id_rsa ansible_become_pass=s3cr3t
+all:
+  vars:
+    myusername: tboronczyk
+    mydomain: example.com
+    ansible_ssh_port: 22
+    ansible_ssh_user: tboronczyk
+    ansible_ssh_pass: p@ssw0rd
+    ansible_become_pass: s3cr3t
+  children:
+    webservers:
+      hosts:
+        www:
+          ansible_host: 192.168.56.100
+    mailservers:
+      hosts:
+        mail:
+          ansible_host: 192.168.56.200
