@@ -21,10 +21,10 @@ Follow these steps to provision the web server.
   * `cd ../ansible`
   * `cp hosts.example hosts`
   * update the values in `hosts` accordingly
-  * `ansible-playbook webserver.yaml`
+  * `ansible-playbook site.yaml`
 
 ### TODO
 
   * clean up Ansible playbook
   * invoke Ansible from Terraform
-  * AWS option 
+  * AWS option?
