@@ -75,3 +75,8 @@ resource "linode_domain_record" "caa" {
     target = "letsencrypt.org"
     tag = "issue"
 }
+
+output "ip" {
+  value = "${linode_instance.instance.ip_address}"
+}
+

@@ -1,30 +1,34 @@
-## Provisioning
+# Provisioning
 
-This project uses Terraform and Ansible to provision the web server. Before you
+This project uses Terraform and Ansible to provision a web server. Before you
 begin, ensure both tools are available locally.
 
  * Terraform - [www.terraform.io/downloads.html](https://www.terraform.io/downloads.html)
  * Ansible - `apt-get ansible` or `pip install ansible`
 
-You will also need a Linode API key.
+You will also need a Linode API access key.
 
-## Provision the server
+## Provisioning the server
 
 Follow these steps to provision the web server.
 
+### Generate a dedicated SSH key pair
+
+  * `ssh-keygen -N "" -f ~/.ssh/$domain` (replace `$domain` with your
+    domain name)
+
+### Execute the Terraform script
+
   * `cd terraform`
   * `cp terraform.tfvars.example terraform.tfvars`
-  * update the values in `terraform.tfvars` accordingly
+  * Update the values in `terraform.tfvars` accordingly
   * `terraform init`
   * `terraform apply`
-  * `ssh -t root@xxx.xxx.xxx.xxx 'apt-get install python'`
+
+### Execute the Ansible playbook
+
   * `cd ../ansible`
   * `cp hosts.example hosts`
   * update the values in `hosts` accordingly
   * `ansible-playbook site.yaml`
 
-### TODO
-
-  * clean up Ansible playbook
-  * invoke Ansible from Terraform
-  * AWS option?
