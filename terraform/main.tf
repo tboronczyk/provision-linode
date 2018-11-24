@@ -1,11 +1,22 @@
-module "linode_setup" {
+module "linode_provision" {
     source = "./modules/linode"
-    linode_token = "${var.linode_token}"
+    token = "${var.linode_token}"
     domain = "${var.domain}"
-    ssh_keyfile = "${var.ssh_keyfile}"
     root_pass = "${random_string.password.result}"
 }
 
+module "common_setup" {
+    source = "./modules/common"
+    host = "${module.linode_provision.linode_provision_ip}"
+    root_pass = "${random_string.password.result}"
+    user = "${var.user}"
+    ssh_keyfile = "${var.ssh_keyfile}"
+}
+
 output "ip" {
-    value = "${module.linode_setup.linode_setup_ip}"
+    value = "${module.linode_provision.linode_provision_ip}"
+}
+
+output "root_pass" {
+    value = "${random_string.password.result}"
 }

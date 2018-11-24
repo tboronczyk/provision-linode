@@ -12,11 +12,6 @@ You will also need a Linode API access key.
 
 Follow these steps to provision the web server.
 
-### Generate a dedicated SSH key pair
-
-  * `ssh-keygen -N "" -f ~/.ssh/$domain` (replace `$domain` with your
-    domain name)
-
 ### Execute the Terraform script
 
   * `cd terraform`

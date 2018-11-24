@@ -1,3 +1,4 @@
 linode_token = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 domain = "example.com"
-ssh_keyfile = "~/.ssh/linode-example.pub"
+user = "tboronczyk"
+ssh_keyfile = "~/.ssh/tboronczyk-example.pub"

@@ -1,3 +1,3 @@
-output "linode_setup_ip" {
+output "linode_provision_ip" {
   value = "${linode_instance.instance.ip_address}"
 }
