@@ -22,6 +22,10 @@ resource "null_resource" "setup" {
             "chmod 600 /home/${var.user}/.ssh/authorized_keys"
         ]
     }
+}
+
+resource "null_resource" "ansible" {
+    depends_on = ["null_resource.setup"]
 
     provisioner "local-exec" {
         command = "./generate-inventory.sh > ./ansible-inventory"
