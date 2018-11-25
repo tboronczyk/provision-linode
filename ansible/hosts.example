@@ -3,7 +3,7 @@ all:
     myusername: tboronczyk
     mydomain: example.com
     ansible_ssh_user: tboronczyk
-    ansible_private_keyfile: ~/.ssh/tboronczyk-example
+    ansible_private_keyfile: /home/tboronczyk/.ssh/tboronczyk-example
     #ansible_become_pass: s3cr3t
   children:
     webservers:
