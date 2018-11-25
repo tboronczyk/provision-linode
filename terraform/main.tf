@@ -9,8 +9,10 @@ module "common_setup" {
     source = "./modules/common"
     host = "${module.linode_provision.linode_provision_ip}"
     root_pass = "${random_string.password.result}"
+    domain = "${var.domain}"
     user = "${var.user}"
-    ssh_keyfile = "${var.ssh_keyfile}"
+    ssh_privkey = "${var.ssh_privkey}"
+    ssh_pubkey = "${var.ssh_pubkey}"
 }
 
 output "ip" {

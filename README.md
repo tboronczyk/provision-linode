@@ -12,18 +12,8 @@ You will also need a Linode API access key.
 
 Follow these steps to provision the web server.
 
-### Execute the Terraform script
-
   * `cd terraform`
   * `cp terraform.tfvars.example terraform.tfvars`
   * Update the values in `terraform.tfvars` accordingly
   * `terraform init`
   * `terraform apply`
-
-### Execute the Ansible playbook
-
-  * `cd ../ansible`
-  * `cp hosts.example hosts`
-  * update the values in `hosts` accordingly
-  * `ansible-playbook site.yaml`
-

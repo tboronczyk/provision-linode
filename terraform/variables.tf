@@ -10,8 +10,12 @@ variable "user" {
     description = "Username for non-root account"
 }
 
-variable "ssh_keyfile" {
-    description = "Authorized public SSH keyfile for user"
+variable "ssh_privkey" {
+    description = "Private SSH keyfile for user"
+}
+
+variable "ssh_pubkey" {
+    description = "Public SSH keyfile for user"
 }
 
 resource "random_string" "password" {
