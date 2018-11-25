@@ -1,4 +1,4 @@
-Linode_token = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+linode_token = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 domain = "example.com"
 user = "tboronczyk"
 ssh_privkey = "/home/tboronczyk/.ssh/tboronczyk-example"
