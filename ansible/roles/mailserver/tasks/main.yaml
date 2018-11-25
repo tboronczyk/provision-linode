@@ -163,6 +163,13 @@
     owner: opendkim
     group: opendkim
 
+- name: Extract public value usable for DNS
+  shell: grep -oP '\".*\"' mail.txt | tr "\n\"" " " | sed -e 's/ //g' | sed -e 's/;/; /g' > mail.dkim-value
+  args:
+    chdir: /etc/opendkim/keys/{{mydomain}}
+    executable: /bin/bash
+    creates: /etc/opendkim/keys/{{mydomain}}/mail.dkim-value
+
 - name: Configure primary mail account and aliases (upload SQL)
   template:
     src: files/accounts.sqlite.sql
