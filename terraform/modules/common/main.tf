@@ -1,12 +1,12 @@
 resource "null_resource" "setup" {
-    connection {
-        type = "ssh"
-        user = "root"
-        password = "${var.root_pass}"
-        host = "${var.host}"
-    }
-
     provisioner "remote-exec" {
+        connection {
+            type = "ssh"
+            user = "root"
+            password = "${var.root_pass}"
+            host = "${var.host}"
+        }
+
         inline = [
             # install Python dependency for Ansible
             "apt-get -y install python",
@@ -22,9 +22,7 @@ resource "null_resource" "setup" {
             "chmod 600 /home/${var.user}/.ssh/authorized_keys"
         ]
     }
-}
 
-resource "null_resource" "ansible" {
     provisioner "local-exec" {
         command = "./generate-inventory.sh > ansible-inventory"
 
@@ -38,5 +36,9 @@ resource "null_resource" "ansible" {
 
     provisioner "local-exec" {
         command = "ansible-playbook -i ansible-inventory ../ansible/site.yaml"
+
+        environment {
+            ANSIBLE_HOST_KEY_CHECKING = "False"
+        }
     }
 }
