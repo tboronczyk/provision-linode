@@ -2,10 +2,9 @@ all:
   vars:
     myusername: tboronczyk
     mydomain: example.com
-    ansible_ssh_port: 22
     ansible_ssh_user: tboronczyk
-    ansible_ssh_pass: p@ssw0rd
-    ansible_become_pass: s3cr3t
+    ansible_private_keyfile: ~/.ssh/tboronczyk-example
+    #ansible_become_pass: s3cr3t
   children:
     webservers:
       hosts:
