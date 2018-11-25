@@ -14,8 +14,8 @@
   apt:
     name: certbot
 
-#- name: Install SSL/TLS certificates
-#  command: certbot certonly --standalone -n --agree-tos -m {{myusername}}@{{mydomain}} --rsa-key-size 4096 -d {{mydomain}},www.{{mydomain}},mail.{{mydomain}}
+- name: Install SSL/TLS certificates
+  command: certbot certonly --standalone -n --agree-tos -m {{myusername}}@{{mydomain}} --rsa-key-size 4096 -d {{mydomain}},www.{{mydomain}},mail.{{mydomain}}
 
 - name: Add Oracle MySQL repository
   apt:
