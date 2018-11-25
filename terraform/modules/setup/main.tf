@@ -24,7 +24,7 @@ resource "null_resource" "setup" {
     }
 
     provisioner "local-exec" {
-        command = "./generate-inventory.sh > ansible-inventory"
+        command = "./generate-inventory.sh > ./ansible-inventory"
 
         environment {
             USERNAME = "${var.user}"
@@ -35,7 +35,7 @@ resource "null_resource" "setup" {
     }
 
     provisioner "local-exec" {
-        command = "ansible-playbook -i ansible-inventory ../ansible/site.yaml"
+        command = "ansible-playbook -i ./ansible-inventory ../ansible/site.yaml"
 
         environment {
             ANSIBLE_HOST_KEY_CHECKING = "False"

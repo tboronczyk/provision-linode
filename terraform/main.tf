@@ -5,8 +5,8 @@ module "linode_provision" {
     root_pass = "${random_string.password.result}"
 }
 
-module "common_setup" {
-    source = "./modules/common"
+module "setup" {
+    source = "./modules/setup"
     host = "${module.linode_provision.linode_provision_ip}"
     root_pass = "${random_string.password.result}"
     domain = "${var.domain}"
