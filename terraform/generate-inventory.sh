@@ -6,7 +6,7 @@ all:
     myusername: $USERNAME
     mydomain: $DOMAIN
     ansible_ssh_user: $USERNAME
-    ansible_private_keyfile: $SSH_PRIVKEY
+    ansible_private_key_file: $SSH_PRIVKEY
   children:
     webservers:
       hosts:
