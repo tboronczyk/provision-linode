@@ -6,6 +6,11 @@
     - deb http://archive.ubuntu.com/ubuntu {{ansible_lsb.codename}}-security universe
     - deb http://archive.ubuntu.com/ubuntu {{ansible_lsb.codename}}-updates universe
 
+- name: Generate a new DH group
+  command: openssl dhparam -out /etc/ssl/private/dhparams_4096.pem 4096
+  args:
+    creates: /etc/ssl/private/dhparams_4096.pem
+
 - name: Add certbot PPA repository
   apt_repository:
     repo: ppa:certbot/certbot
@@ -48,11 +53,6 @@
 - name: Install Composer
   apt:
     name: composer
-
-- name: Generate a new DH group
-  command: openssl dhparam -out /etc/ssl/private/dhparams_4096.pem 4096
-  args:
-    creates: /etc/ssl/private/dhparams_4096.pem
 
 - name: Enable Apache modules
   apache2_module:
