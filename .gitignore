@@ -1,2 +1,1 @@
-ansible/hosts
-ansible/*.retry
+*.swp
