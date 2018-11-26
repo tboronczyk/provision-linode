@@ -5,3 +5,7 @@
   tasks:
     - import_role:
         name: mailserver
+
+    - name: Move DKIM key for Terraform
+      local_action: command mv mail.dkim-value ../terraform/mail.dkim-value
+      become: no

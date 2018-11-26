@@ -1,5 +1,5 @@
 module "linode_provision" {
-    source = "./modules/linode"
+    source = "./modules/linode_provision"
     token = "${var.linode_token}"
     domain = "${var.domain}"
     root_pass = "${random_string.password.result}"
@@ -7,7 +7,7 @@ module "linode_provision" {
 
 module "setup" {
     source = "./modules/setup"
-    host = "${module.linode_provision.linode_provision_ip}"
+    host = "${module.linode_provision.linode_provision_ip_address}"
     root_pass = "${random_string.password.result}"
     domain = "${var.domain}"
     user = "${var.user}"
@@ -15,10 +15,9 @@ module "setup" {
     ssh_pubkey = "${var.ssh_pubkey}"
 }
 
-output "ip" {
-    value = "${module.linode_provision.linode_provision_ip}"
-}
-
-output "root_pass" {
-    value = "${random_string.password.result}"
+module "linode_dkim" {
+    source = "./modules/linode_dkim"
+    token = "${var.linode_token}"
+    domain_id = "${module.linode_provision.linode_provision_domain_id}"
+    dkim_value = "${file("mail.dkim-value")}"
 }

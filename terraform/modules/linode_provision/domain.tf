@@ -54,13 +54,6 @@ resource "linode_domain_record" "txt-spf" {
     target = "v=spf1 mx -all"
 }
 
-#resource "linode_domain_record" "txt-domainkey" {
-#    domain_id = "${linode_domain.domain.id}"
-#    record_type = "TXT"
-#    name = "mail._domainkey"
-#    target = "v=DKIM1; h=sha256; k=rsa; p=..."
-#}
-
 resource "linode_domain_record" "txt-dmarc" {
     domain_id = "${linode_domain.domain.id}"
     record_type = "TXT"
@@ -74,9 +67,5 @@ resource "linode_domain_record" "caa" {
     name = ""
     target = "letsencrypt.org"
     tag = "issue"
-}
-
-output "ip" {
-  value = "${linode_instance.instance.ip_address}"
 }
 
