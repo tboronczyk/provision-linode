@@ -163,12 +163,18 @@
     owner: opendkim
     group: opendkim
 
-- name: Extract public value usable for DNS
+- name: Extract public DKIM key for DNS
   shell: grep -oP '\".*\"' mail.txt | tr "\n\"" " " | sed -e 's/ //g' | sed -e 's/;/; /g' > mail.dkim-value
   args:
     chdir: /etc/opendkim/keys/{{mydomain}}
     executable: /bin/bash
     creates: /etc/opendkim/keys/{{mydomain}}/mail.dkim-value
+
+- name: Transfer public DKIM key
+  fetch:
+    dest: mail.dkim-value
+    src: /etc/opendkim/keys/{{mydomain}}/mail.dkim-value
+    flatten: yes
 
 - name: Configure primary mail account and aliases (upload SQL)
   template:
