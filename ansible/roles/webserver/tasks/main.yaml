@@ -22,6 +22,16 @@
 - name: Install SSL/TLS certificates
   command: certbot certonly --standalone -n --agree-tos -m {{myusername}}@{{mydomain}} --rsa-key-size 4096 -d {{mydomain}},www.{{mydomain}},mail.{{mydomain}}
 
+- name: Install debconf-utils
+  apt:
+    name: debconf-utils
+
+- name: Configure package selections for MySQL
+  shell: echo "{{item}}" | debconf-set-selections
+  with_items:
+    - mysql-apt-config mysql-apt-config/select-server string mysql-8.0
+    - mysql-apt-config mysql-apt-config/select-product select Ok
+
 - name: Add Oracle MySQL repository
   apt:
     deb: https://dev.mysql.com/get/mysql-apt-config_0.8.10-1_all.deb
