@@ -19,5 +19,5 @@ module "linode_dkim" {
     source = "./modules/linode_dkim"
     token = "${var.linode_token}"
     domain_id = "${module.linode_provision.linode_provision_domain_id}"
-    dkim_value = "${file("mail.dkim-value")}"
+    dkim_value = "${module.setup.setup_dkim_key}"
 }

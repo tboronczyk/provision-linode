@@ -46,3 +46,8 @@ resource "null_resource" "ansible" {
         }
     }
 }
+
+data "local_file" "dkim_key" {
+    depends_on = ["null_resource.ansible"]
+    filename = "mail.dkim-value"
+}

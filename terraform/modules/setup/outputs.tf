@@ -1,4 +1,3 @@
-output "setup_dkim_value" {
-  depends_on = ["null_resource.ansible"]
-  value = "${file("mail.dkim-value")}"
+output "setup_dkim_key" {
+    value = "${data.local_file.dkim_key.content}"
 }
