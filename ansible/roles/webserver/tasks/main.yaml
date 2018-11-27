@@ -22,6 +22,14 @@
 - name: Install SSL/TLS certificates
   command: certbot certonly --standalone -n --agree-tos -m {{myusername}}@{{mydomain}} --rsa-key-size 4096 -d {{mydomain}},www.{{mydomain}},mail.{{mydomain}}
 
+- name: Register certificate renewal job
+  template:
+    src: files/cron/renew-certificates
+    dest: /etc/cron.weekly/renew-certificates
+    owner: root
+    group: root
+    mode: 0755
+
 - name: Install debconf-utils
   apt:
     name: debconf-utils

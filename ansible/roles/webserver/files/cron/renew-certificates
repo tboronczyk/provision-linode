@@ -1,0 +1,7 @@
+#!/bin/sh
+
+set -e
+
+certbot renew \
+  --pre-hook="/bin/systemctl stop apache2" \
+  --post-hook="/bin/systemctl start apache2; /bin/systemctl restart dovecot; /bin/systemctl restart postfix"
