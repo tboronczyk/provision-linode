@@ -6,16 +6,19 @@
     home: /var/spool/vmail
     shell: /usr/sbin/nologin
     system: yes
+    state: present
 
 - name: Install SQLite
   apt:
     name: sqlite3
+    state: present
 
 - name: Install Postfix
   apt:
     name:
      - postfix
      - postfix-sqlite
+    state: present
 
 - name: Install Dovecot
   apt:
@@ -23,30 +26,37 @@
      - dovecot-pop3d
      - dovecot-sqlite
      - dovecot-lmtpd
+    state: present
 
 - name: Install SpamAssassin
   apt:
     name:
       - spamassassin
+    state: present
 
 - name: Install OpenDKIM
   apt:
     name:
       - opendkim
       - opendkim-tools
+    state: present
 
-- name: Configure Postfix
+- name: Copy Postfix main configuration template
   template:
+    src: /templates/postfix/main.cf.j2
+    dest: /etc/postfix/main.cf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Copy Postfix configuration files
+  copy:
     src: "{{item.src}}"
     dest: "{{item.dest}}"
     owner: root
     group: root
     mode: 0644
   with_items:
-    - {
-        src: "files/postfix/main.cf",
-        dest: "/etc/postfix/main.cf",
-      }
     - {
         src: "files/postfix/master.cf",
         dest: "/etc/postfix/master.cf",
@@ -64,8 +74,16 @@
         dest: "/etc/postfix/sqlite-virtual-alias-maps.cf",
       }
 
-- name: Configure Dovecot
+- name: Copy Dovecot ssl configuration template
   template:
+    src: templates/dovecot/10-ssl.conf.j2
+    dest: /etc/dovecot/conf.d/10-ssl.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Copy Dovecot configuration files
+  copy:
     src: "{{item.src}}"
     dest: "{{item.dest}}"
     owner: root
@@ -81,10 +99,6 @@
         dest: "/etc/dovecot/conf.d/10-auth.conf"
       }
     - {
-        src: "files/dovecot/10-ssl.conf",
-        dest: "/etc/dovecot/conf.d/10-ssl.conf"
-      }
-    - {
         src: "files/dovecot/10-master.conf",
         dest: "/etc/dovecot/conf.d/10-master.conf"
       }
@@ -97,8 +111,8 @@
         dest: "/etc/dovecot/conf.d/auth-sql.conf.ext"
       }
 
-- name: Configure SpamAssassin
-  template:
+- name: Copy SpamAssassin configuration files
+  copy:
     src: "{{item.src}}"
     dest: "{{item.dest}}"
     owner: root
@@ -122,8 +136,29 @@
     path: /etc/opendkim/keys/{{mydomain}}
     state: directory
 
-- name: Configure OpenDKIM
+- name: Copy OpenDKIM configuration templates
   template:
+    src: "{{item.src}}"
+    dest: "{{item.dest}}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - {
+        src: "files/opendkim/TrustedHosts.j2",
+        dest: "/etc/opendkim/TrustedHosts"
+      }
+    - {
+        src: "files/opendkim/KeyTable.j2",
+        dest: "/etc/opendkim/KeyTable"
+      }
+    - {
+        src: "files/opendkim/SigningTable.j2",
+        dest: "/etc/opendkim/SigningTable"
+      }
+
+- name: Copy OpenDKIM configuration templates
+  copy:
     src: "{{item.src}}"
     dest: "{{item.dest}}"
     owner: root
@@ -138,18 +173,6 @@
         src: "files/opendkim/default",
         dest: "/etc/default/opendkim"
       }
-    - {
-        src: "files/opendkim/TrustedHosts",
-        dest: "/etc/opendkim/TrustedHosts"
-      }
-    - {
-        src: "files/opendkim/KeyTable",
-        dest: "/etc/opendkim/KeyTable"
-      }
-    - {
-        src: "files/opendkim/SigningTable",
-        dest: "/etc/opendkim/SigningTable"
-      }
 
 - name: Generate OpenDKIM Keys
   command: opendkim-genkey -s mail -d {{mydomain}}
@@ -162,6 +185,7 @@
     path: /etc/opendkim/keys/{{mydomain}}/mail.private
     owner: opendkim
     group: opendkim
+    state: file
 
 - name: Extract public DKIM key for DNS
   shell: grep -oP '\".*\"' mail.txt | tr "\n\"" " " | sed -e 's/ //g' | sed -e 's/;/; /g' > mail.dkim-value
@@ -170,7 +194,7 @@
     executable: /bin/bash
     creates: /etc/opendkim/keys/{{mydomain}}/mail.dkim-value
 
-- name: Transfer public DKIM key
+- name: Fetch public DKIM key
   fetch:
     dest: mail.dkim-value
     src: /etc/opendkim/keys/{{mydomain}}/mail.dkim-value
@@ -194,9 +218,9 @@
 
 - name: Restart installed services
   systemd:
+    name: "{{item}}"
     enabled: yes
     state: restarted
-    name: "{{item}}"
   with_items:
     - spamassassin
     - opendkim
@@ -205,8 +229,10 @@
 
 - name: Update firewall rules
   ufw:
-    rule: allow
     name: "{{item}}"
+    rule: allow
+    state: enabled
   with_items:
-    - Postfix
     - Dovecot Secure POP3
+    - Postfix
+    - OpenSSH

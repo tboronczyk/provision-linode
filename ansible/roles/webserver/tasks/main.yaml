@@ -1,6 +1,7 @@
 - name: Enable universe
   apt_repository:
     repo: "{{item}}"
+    state: present
   with_items:
     - deb http://archive.ubuntu.com/ubuntu {{ansible_lsb.codename}} universe
     - deb http://archive.ubuntu.com/ubuntu {{ansible_lsb.codename}}-security universe
@@ -9,6 +10,7 @@
 - name: Install debconf-utils
   apt:
     name: debconf-utils
+    state: present
 
 - name: Configure package selections for MySQL
   debconf:
@@ -23,13 +25,15 @@
 - name: Add Oracle MySQL repository
   apt:
     deb: https://dev.mysql.com/get/mysql-apt-config_0.8.10-1_all.deb
+    state: present
 
 - name: Install MySQL
   apt:
     name: mysql-server
+    state: present
 
-- name: Configure MySQL
-  template:
+- name: Copy MySQL configuration file
+  copy:
     src: files/mysql/mysqld.cnf
     dest: /etc/mysql/mysql.conf.d/mysqld.cnf
     owner: root
@@ -39,6 +43,7 @@
 - name: Install Apache
   apt:
     name: apache2
+    state: present
 
 - name: Install PHP
   apt:
@@ -47,10 +52,12 @@
       - php-curl
       - php-intl
       - libapache2-mod-php
+    state: present
 
 - name: Install Composer
   apt:
     name: composer
+    state: present
 
 - name: Generate a new DH group
   command: openssl dhparam -out /etc/ssl/private/dhparams_4096.pem 4096
@@ -60,18 +67,20 @@
 - name: Add certbot PPA repository
   apt_repository:
     repo: ppa:certbot/certbot
+    state: present
 
 - name: Install certbot
   apt:
     name: certbot
+    state: present
 
 - name: Install SSL/TLS certificates
   command: certbot certonly --standalone -n --agree-tos -m {{myusername}}@{{mydomain}} --rsa-key-size 4096 -d {{mydomain}},www.{{mydomain}},mail.{{mydomain}}
   args:
     creates: /etc/letsencrypt/live/{{mydomain}}/
 
-- name: Register certificate renewal job
-  template:
+- name: Copy certificate renewal job
+  copy:
     src: files/cron/renew-certificates
     dest: /etc/cron.weekly/renew-certificates
     owner: root
@@ -81,27 +90,27 @@
 - name: Enable Apache modules
   apache2_module:
     name: "{{item}}"
+    state: present
   with_items:
     - headers
     - rewrite
     - ssl
 
-- name: Configure Apache
+- name: Copy Apache site configuration template
   template:
-    src: "{{item.src}}"
-    dest: "{{item.dest}}"
+    src: "templates/apache2/mydomain.conf.j2"
+    dest: "/etc/apache2/sites-available/{{mydomain}}.conf"
     owner: root
     group: root
     mode: 0644
-  with_items:
-    - {
-        src: "files/apache2/ssl.conf",
-        dest: "/etc/apache2/mods-available/ssl.conf"
-      }
-    - {
-        src: "files/apache2/mydomain.conf",
-        dest: "/etc/apache2/sites-available/{{mydomain}}.conf"
-      }
+
+- name: Copy Apache ssl configuration file
+  copy:
+    src: "files/apache2/ssl.conf"
+    dest: "/etc/apache2/mods-available/ssl.conf"
+    owner: root
+    group: root
+    mode: 0644
 
 - name: Create web directory
   file:
@@ -114,6 +123,7 @@
     owner: www-data
     group: www-data
     mode: u=rwX,g=rwX,o=rX
+    state: directory
   with_items:
     - /var/www/{{mydomain}}
     - /var/www/{{mydomain}}/www
@@ -123,6 +133,7 @@
   file:
     path: /var/www/{{mydomain}}
     mode: g+s
+    state: directory
 
 - name: Disable Apache default site
   file:
@@ -137,14 +148,18 @@
 
 - name: Restart installed services
   systemd:
+    name: "{{item}}"
     enabled: yes
     state: restarted
-    name: "{{item}}"
   with_items:
     - apache2
     - mysql
 
 - name: Update firewall rules
   ufw:
+    name: "{{item}}"
     rule: allow
-    name: Apache Full
+    state: enabled
+  with_items:
+    - Apache Full
+    - OpenSSH
