@@ -1,0 +1,7 @@
+---
+- name: Orchestrate database setup
+  hosts: databases
+  become: True
+  tasks:
+    - import_role:
+        name: database

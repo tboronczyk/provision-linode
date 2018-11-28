@@ -6,6 +6,10 @@ all:
     ansible_private_key_file: /home/tboronczyk/.ssh/tboronczyk-example
     #ansible_become_pass: s3cr3t
   children:
+    databases:
+      hosts:
+        db:
+          ansible_host: 192.168.56.100
     webservers:
       hosts:
         www:

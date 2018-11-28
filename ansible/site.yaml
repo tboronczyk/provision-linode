@@ -1,3 +1,4 @@
 ---
+  - import_playbook: database.yaml
   - import_playbook: webserver.yaml
   - import_playbook: mailserver.yaml

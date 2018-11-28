@@ -1,0 +1,47 @@
+- name: Enable universe
+  apt_repository:
+    repo: "{{item}}"
+    state: present
+  with_items:
+    - deb http://archive.ubuntu.com/ubuntu {{ansible_lsb.codename}} universe
+    - deb http://archive.ubuntu.com/ubuntu {{ansible_lsb.codename}}-security universe
+    - deb http://archive.ubuntu.com/ubuntu {{ansible_lsb.codename}}-updates universe
+
+- name: Install debconf-utils
+  apt:
+    name: debconf-utils
+    state: present
+
+- name: Configure package selections for MySQL
+  debconf:
+    name: mysql-apt-config
+    question: "{{item.question}}"
+    value: "{{item.value}}"
+    vtype: "{{item.vtype}}"
+  with_items:
+    - { question: "mysql-apt-config/select-server", value: "mysql-8.0", vtype: "string" }
+    - { question: "mysql-apt-config/select-product", value: "Ok", vtype: "select" }
+
+- name: Add Oracle MySQL repository
+  apt:
+    deb: https://dev.mysql.com/get/mysql-apt-config_0.8.10-1_all.deb
+    state: present
+
+- name: Install MySQL
+  apt:
+    name: mysql-server
+    state: present
+
+- name: Copy MySQL configuration file
+  copy:
+    src: files/mysql/mysqld.cnf
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Restart installed services
+  systemd:
+    name: mysql
+    enabled: yes
+    state: restarted
