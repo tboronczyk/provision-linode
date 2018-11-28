@@ -6,39 +6,19 @@
     - deb http://archive.ubuntu.com/ubuntu {{ansible_lsb.codename}}-security universe
     - deb http://archive.ubuntu.com/ubuntu {{ansible_lsb.codename}}-updates universe
 
-- name: Generate a new DH group
-  command: openssl dhparam -out /etc/ssl/private/dhparams_4096.pem 4096
-  args:
-    creates: /etc/ssl/private/dhparams_4096.pem
-
-- name: Add certbot PPA repository
-  apt_repository:
-    repo: ppa:certbot/certbot
-
-- name: Install certbot
-  apt:
-    name: certbot
-
-- name: Install SSL/TLS certificates
-  command: certbot certonly --standalone -n --agree-tos -m {{myusername}}@{{mydomain}} --rsa-key-size 4096 -d {{mydomain}},www.{{mydomain}},mail.{{mydomain}}
-
-- name: Register certificate renewal job
-  template:
-    src: files/cron/renew-certificates
-    dest: /etc/cron.weekly/renew-certificates
-    owner: root
-    group: root
-    mode: 0755
-
 - name: Install debconf-utils
   apt:
     name: debconf-utils
 
 - name: Configure package selections for MySQL
-  shell: echo "{{item}}" | debconf-set-selections
+  debconf:
+    name: mysql-apt-config
+    question: "{{item.question}}"
+    value: "{{item.value}}"
+    vtype: "{{item.vtype}}"
   with_items:
-    - mysql-apt-config mysql-apt-config/select-server string mysql-8.0
-    - mysql-apt-config mysql-apt-config/select-product select Ok
+    - { question: "mysql-apt-config/select-server", value: "mysql-8.0", vtype: "string" }
+    - { question: "mysql-apt-config/select-product", value: "Ok", vtype: "select" }
 
 - name: Add Oracle MySQL repository
   apt:
@@ -72,6 +52,32 @@
   apt:
     name: composer
 
+- name: Generate a new DH group
+  command: openssl dhparam -out /etc/ssl/private/dhparams_4096.pem 4096
+  args:
+    creates: /etc/ssl/private/dhparams_4096.pem
+
+- name: Add certbot PPA repository
+  apt_repository:
+    repo: ppa:certbot/certbot
+
+- name: Install certbot
+  apt:
+    name: certbot
+
+- name: Install SSL/TLS certificates
+  command: certbot certonly --standalone -n --agree-tos -m {{myusername}}@{{mydomain}} --rsa-key-size 4096 -d {{mydomain}},www.{{mydomain}},mail.{{mydomain}}
+  args:
+    creates: /etc/letsencrypt/live/{{mydomain}}/
+
+- name: Register certificate renewal job
+  template:
+    src: files/cron/renew-certificates
+    dest: /etc/cron.weekly/renew-certificates
+    owner: root
+    group: root
+    mode: 0755
+
 - name: Enable Apache modules
   apache2_module:
     name: "{{item}}"
@@ -104,22 +110,30 @@
 
 - name: Set web directory ownership and permissions
   file:
-    path: /var/www/{{mydomain}}
+    path: "{{item}}"
     owner: www-data
     group: www-data
     mode: u=rwX,g=rwX,o=rX
-    recurse: yes
+  with_items:
+    - /var/www/{{mydomain}}
+    - /var/www/{{mydomain}}/www
+    - /var/www/{{mydomain}}/www/public
 
 - name: Set web directory group sticky bit
   file:
     path: /var/www/{{mydomain}}
     mode: g+s
 
+- name: Disable Apache default site
+  file:
+    path: /etc/apache2/sites-enabled/000-default
+    state: absent
+
 - name: Enable Apache site
-  command: "{{item}}"
-  with_items:
-    - a2ensite {{mydomain}}
-    - a2dissite 000-default
+  file:
+    src: /etc/apache2/sites-available/{{mydomain}}.conf
+    dest: /etc/apache2/sites-enabled/{{mydomain}}.conf
+    state: link
 
 - name: Restart installed services
   systemd:
