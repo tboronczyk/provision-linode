@@ -26,7 +26,7 @@
     name: composer
     state: present
 
-- name: Generate a new DH group
+- name: Generate a new DH group file - THIS WILL TAKE A LONG TIME
   command: openssl dhparam -out /etc/ssl/private/dhparams_4096.pem 4096
   args:
     creates: /etc/ssl/private/dhparams_4096.pem
@@ -71,7 +71,7 @@
     group: root
     mode: 0644
 
-- name: Copy Apache ssl configuration file
+- name: Copy Apache SSL configuration file
   copy:
     src: "files/apache2/ssl.conf"
     dest: "/etc/apache2/mods-available/ssl.conf"
@@ -86,21 +86,15 @@
 
 - name: Set web directory ownership and permissions
   file:
-    path: "{{item}}"
+    path: "{{item.path}}"
     owner: www-data
     group: www-data
-    mode: u=rwX,g=rwX,o=rX
+    mode: "{{item.mode}}"
     state: directory
   with_items:
-    - /var/www/{{mydomain}}
-    - /var/www/{{mydomain}}/www
-    - /var/www/{{mydomain}}/www/public
-
-- name: Set web directory group sticky bit
-  file:
-    path: /var/www/{{mydomain}}
-    mode: g+s
-    state: directory
+    - { path: "/var/www/{{mydomain}}", mode: "u=rwX,g=rwXs,o=rX" }
+    - { path: "/var/www/{{mydomain}}/www", mode: "u=rwX,g=rwX,o=rX" }
+    - { path: "/var/www/{{mydomain}}/public", mode: "u=rwX,g=rwX,o=rX" }
 
 - name: Disable Apache default site
   file:
