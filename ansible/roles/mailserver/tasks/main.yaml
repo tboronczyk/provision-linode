@@ -74,7 +74,7 @@
         dest: "/etc/postfix/sqlite-virtual-alias-maps.cf",
       }
 
-- name: Copy Dovecot ssl configuration template
+- name: Copy Dovecot SSL configuration template
   template:
     src: templates/dovecot/10-ssl.conf.j2
     dest: /etc/dovecot/conf.d/10-ssl.conf
@@ -157,7 +157,7 @@
         dest: "/etc/opendkim/SigningTable"
       }
 
-- name: Copy OpenDKIM configuration templates
+- name: Copy OpenDKIM configuration files
   copy:
     src: "{{item.src}}"
     dest: "{{item.dest}}"
@@ -194,27 +194,19 @@
     executable: /bin/bash
     creates: /etc/opendkim/keys/{{mydomain}}/mail.dkim-value
 
-- name: Fetch public DKIM key
-  fetch:
-    dest: mail.dkim-value
-    src: /etc/opendkim/keys/{{mydomain}}/mail.dkim-value
-    flat: yes
-
-- name: Configure primary mail account and aliases (upload SQL)
+- name: Copy primary mail account and aliases schema template
   template:
-    src: files/accounts.sqlite.sql
-    dest: /tmp/accounts.sqlite.sql
+    src: templates/postfix/accounts.sqlite.sql.j2
+    dest: /etc/postfix/accounts.sqlite.sql
+    owner: root
+    group: root
+    mode: 0600
 
-- name: Configure primary mail account and aliases (import SQL)
-  shell: sqlite3 /etc/postfix/accounts.sqlite < /tmp/accounts.sqlite.sql
+- name: Configure primary mail account and aliases
+  shell: sqlite3 /etc/postfix/accounts.sqlite < /etc/postfix/accounts.sqlite.sql
   args:
     executable: /bin/bash
     creates: /etc/postfix/accounts.sqlite
-
-- name: Configure primary mail account and aliases (delete SQL)
-  file:
-    path: /tmp/accounts.sqlite.sql
-    state: absent
 
 - name: Restart installed services
   systemd:

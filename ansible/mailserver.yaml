@@ -6,6 +6,8 @@
     - import_role:
         name: mailserver
 
-    - name: Move DKIM key for Terraform
-      local_action: command mv mail.dkim-value ../terraform/mail.dkim-value
-      become: no
+    - name: Fetch public DKIM key for Terraform
+      fetch:
+        dest: ../terraform/mail.dkim-value
+        src: /etc/opendkim/keys/{{mydomain}}/mail.dkim-value
+        flat: yes
