@@ -18,6 +18,8 @@
       - php
       - php-curl
       - php-intl
+      - php-pdo-mysql
+      - php-simplexml
       - libapache2-mod-php
     state: present
 
