@@ -43,7 +43,7 @@
 
 - name: Copy Postfix main configuration template
   template:
-    src: /templates/postfix/main.cf.j2
+    src: templates/postfix/main.cf.j2
     dest: /etc/postfix/main.cf
     owner: root
     group: root
@@ -145,15 +145,15 @@
     mode: 0644
   with_items:
     - {
-        src: "files/opendkim/TrustedHosts.j2",
+        src: "templates/opendkim/TrustedHosts.j2",
         dest: "/etc/opendkim/TrustedHosts"
       }
     - {
-        src: "files/opendkim/KeyTable.j2",
+        src: "templates/opendkim/KeyTable.j2",
         dest: "/etc/opendkim/KeyTable"
       }
     - {
-        src: "files/opendkim/SigningTable.j2",
+        src: "templates/opendkim/SigningTable.j2",
         dest: "/etc/opendkim/SigningTable"
       }
 
