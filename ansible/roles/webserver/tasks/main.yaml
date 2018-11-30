@@ -44,9 +44,9 @@
     state: present
 
 - name: Install SSL/TLS certificates
-  command: certbot certonly --standalone -n --agree-tos -m {{myusername}}@{{mydomain}} --rsa-key-size 4096 -d {{mydomain}},www.{{mydomain}},mail.{{mydomain}}
+  command: certbot certonly --standalone -n --agree-tos -m {{username}}@{{domain}} --rsa-key-size 4096 -d {{domain}},www.{{domain}},mail.{{domain}}
   args:
-    creates: /etc/letsencrypt/live/{{mydomain}}/
+    creates: /etc/letsencrypt/live/{{domain}}/
 
 - name: Copy certificate renewal job
   copy:
@@ -68,7 +68,7 @@
 - name: Copy Apache site configuration template
   template:
     src: "templates/apache2/mydomain.conf.j2"
-    dest: "/etc/apache2/sites-available/{{mydomain}}.conf"
+    dest: "/etc/apache2/sites-available/{{domain}}.conf"
     owner: root
     group: root
     mode: 0644
@@ -83,7 +83,7 @@
 
 - name: Create web directory
   file:
-    path: /var/www/{{mydomain}}/www/public
+    path: /var/www/{{domain}}/www/public
     state: directory
 
 - name: Set web directory ownership and permissions
@@ -94,9 +94,9 @@
     mode: "{{item.mode}}"
     state: directory
   with_items:
-    - { path: "/var/www/{{mydomain}}", mode: "u=rwX,g=rwXs,o=rX" }
-    - { path: "/var/www/{{mydomain}}/www", mode: "u=rwX,g=rwX,o=rX" }
-    - { path: "/var/www/{{mydomain}}/public", mode: "u=rwX,g=rwX,o=rX" }
+    - { path: "/var/www/{{domain}}", mode: "u=rwX,g=rwXs,o=rX" }
+    - { path: "/var/www/{{domain}}/www", mode: "u=rwX,g=rwX,o=rX" }
+    - { path: "/var/www/{{domain}}/public", mode: "u=rwX,g=rwX,o=rX" }
 
 - name: Disable Apache default site
   file:
@@ -105,8 +105,8 @@
 
 - name: Enable Apache site
   file:
-    src: /etc/apache2/sites-available/{{mydomain}}.conf
-    dest: /etc/apache2/sites-enabled/{{mydomain}}.conf
+    src: /etc/apache2/sites-available/{{domain}}.conf
+    dest: /etc/apache2/sites-enabled/{{domain}}.conf
     state: link
 
 - name: Restart installed services

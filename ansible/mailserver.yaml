@@ -9,5 +9,5 @@
     - name: Fetch public DKIM key for Terraform
       fetch:
         dest: ../terraform/mail.dkim-value
-        src: /etc/opendkim/keys/{{mydomain}}/mail.dkim-value
+        src: /etc/opendkim/keys/{{domain}}/mail.dkim-value
         flat: yes

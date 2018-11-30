@@ -1,30 +1,30 @@
 <VirtualHost *:80>
-    ServerName {{mydomain}}
-    ServerAlias www.{{mydomain}}
-    Redirect / https://www.{{mydomain}}
+    ServerName {{domain}}
+    ServerAlias www.{{domain}}
+    Redirect / https://www.{{domain}}
 </VirtualHost>
 
 <VirtualHost *:443>
-    ServerName {{mydomain}}
-    Redirect / https://www.{{mydomain}}
+    ServerName {{domain}}
+    Redirect / https://www.{{domain}}
 
     SSLEngine On
-    SSLCertificateFile /etc/letsencrypt/live/{{mydomain}}/fullchain.pem
-    SSLCertificateKeyFile /etc/letsencrypt/live/{{mydomain}}/privkey.pem
+    SSLCertificateFile /etc/letsencrypt/live/{{domain}}/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/{{domain}}/privkey.pem
 </VirtualHost>
 
 <VirtualHost *:443>
-    ServerName www.{{mydomain}}
-    ServerAdmin webmaster@{{mydomain}}
-    DocumentRoot /var/www/{{mydomain}}/www/public
+    ServerName www.{{domain}}
+    ServerAdmin webmaster@{{domain}}
+    DocumentRoot /var/www/{{domain}}/www/public
     ErrorLog ${APACHE_LOG_DIR}/error.log
     CustomLog ${APACHE_LOG_DIR}/access.log combined
 
     SSLEngine On
-    SSLCertificateFile /etc/letsencrypt/live/{{mydomain}}/fullchain.pem
-    SSLCertificateKeyFile /etc/letsencrypt/live/{{mydomain}}/privkey.pem
+    SSLCertificateFile /etc/letsencrypt/live/{{domain}}/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/{{domain}}/privkey.pem
 
-    <Directory /var/www/{{mydomain}}/www/public>
+    <Directory /var/www/{{domain}}/www/public>
         AllowOverride All
         Order allow,deny
         Allow from all

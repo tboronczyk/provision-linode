@@ -10,7 +10,7 @@ module "setup" {
     host = "${module.linode_provision.linode_provision_ip_address}"
     root_pass = "${random_string.password.result}"
     domain = "${var.domain}"
-    user = "${var.user}"
+    username = "${var.username}"
     ssh_privkey = "${var.ssh_privkey}"
     ssh_pubkey = "${var.ssh_pubkey}"
 }

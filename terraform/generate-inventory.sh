@@ -3,8 +3,8 @@
 cat <<EOF
 all:
   vars:
-    myusername: $USERNAME
-    mydomain: $DOMAIN
+    username: $USERNAME
+    domain: $DOMAIN
     ansible_ssh_user: $USERNAME
     ansible_private_key_file: $SSH_PRIVKEY
   children:

@@ -133,7 +133,7 @@
 
 - name: Create OpenDKIM directories
   file:
-    path: /etc/opendkim/keys/{{mydomain}}
+    path: /etc/opendkim/keys/{{domain}}
     state: directory
 
 - name: Copy OpenDKIM configuration templates
@@ -175,14 +175,14 @@
       }
 
 - name: Generate OpenDKIM Keys
-  command: opendkim-genkey -s mail -d {{mydomain}}
+  command: opendkim-genkey -s mail -d {{domain}}
   args:
-    chdir: /etc/opendkim/keys/{{mydomain}}
-    creates: /etc/opendkim/keys/{{mydomain}}/mail.private
+    chdir: /etc/opendkim/keys/{{domain}}
+    creates: /etc/opendkim/keys/{{domain}}/mail.private
 
 - name: Set OpenDKIM mail key ownership
   file:
-    path: /etc/opendkim/keys/{{mydomain}}/mail.private
+    path: /etc/opendkim/keys/{{domain}}/mail.private
     owner: opendkim
     group: opendkim
     state: file
@@ -190,9 +190,9 @@
 - name: Extract public DKIM key for DNS
   shell: grep -oP '\".*\"' mail.txt | tr "\n\"" " " | sed -e 's/ //g' | sed -e 's/;/; /g' > mail.dkim-value
   args:
-    chdir: /etc/opendkim/keys/{{mydomain}}
+    chdir: /etc/opendkim/keys/{{domain}}
     executable: /bin/bash
-    creates: /etc/opendkim/keys/{{mydomain}}/mail.dkim-value
+    creates: /etc/opendkim/keys/{{domain}}/mail.dkim-value
 
 - name: Copy primary mail account and aliases schema template
   template:

@@ -22,8 +22,8 @@ readme_directory = no
 compatibility_level = 2
 
 # TLS parameters
-smtpd_tls_cert_file = /etc/letsencrypt/live/{{mydomain}}/fullchain.pem
-smtpd_tls_key_file = /etc/letsencrypt/live/{{mydomain}}/privkey.pem
+smtpd_tls_cert_file = /etc/letsencrypt/live/{{domain}}/fullchain.pem
+smtpd_tls_key_file = /etc/letsencrypt/live/{{domain}}/privkey.pem
 smtpd_use_tls=yes
 smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
@@ -32,7 +32,7 @@ smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
 # information on enabling SSL in the smtp client.
 
 smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
-myhostname = mail.{{mydomain}}
+myhostname = mail.{{domain}}
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
 mydestination = localhost

@@ -12,14 +12,14 @@ resource "null_resource" "setup" {
             "which python || apt-get -y install python",
 
             # non-root user account
-            "id -u ${var.user} || useradd -m -s /bin/bash ${var.user}",
-            "groups ${var.user} | grep -q sudo || usermod -a -G sudo ${var.user}",
-            "[ -f /etc/sudoers.d/${var.user} ] || echo '${var.user} ALL = NOPASSWD : ALL' > /etc/sudoers.d/${var.user}",
-            "[ -d /home/${var.user}/.ssh ] || mkdir /home/${var.user}/.ssh",
-            "[ -f /home/${var.user}/.ssh/authorized_keys ] || echo '${file(var.ssh_pubkey)}' > /home/${var.user}/.ssh/authorized_keys",
-            "chown -R tboronczyk:tboronczyk /home/${var.user}/.ssh",
-            "chmod 700 /home/${var.user}/.ssh",
-            "chmod 600 /home/${var.user}/.ssh/authorized_keys"
+            "id -u ${var.username} || useradd -m -s /bin/bash ${var.username}",
+            "groups ${var.username} | grep -q sudo || usermod -a -G sudo ${var.username}",
+            "[ -f /etc/sudoers.d/${var.username} ] || echo '${var.username} ALL = NOPASSWD : ALL' > /etc/sudoers.d/${var.username}",
+            "[ -d /home/${var.username}/.ssh ] || mkdir /home/${var.username}/.ssh",
+            "[ -f /home/${var.username}/.ssh/authorized_keys ] || echo '${file(var.ssh_pubkey)}' > /home/${var.username}/.ssh/authorized_keys",
+            "chown -R ${var.username}:${var.username} /home/${var.username}/.ssh",
+            "chmod 700 /home/${var.username}/.ssh",
+            "chmod 600 /home/${var.username}/.ssh/authorized_keys"
         ]
     }
 }
@@ -31,7 +31,7 @@ resource "null_resource" "ansible" {
         command = "./generate-inventory.sh > ./ansible-inventory"
 
         environment {
-            USERNAME = "${var.user}"
+            USERNAME = "${var.username}"
             DOMAIN = "${var.domain}"
             SSH_PRIVKEY = "${var.ssh_privkey}"
             HOST_IP = "${var.host}"
