@@ -14,8 +14,8 @@ You will also need a [Linode API access key](https://www.linode.com/docs/platfor
 
 Generate SSH keypairs for the root and primary user accounts:
 
-  * ssh-keygen -N "" -C root@example.com -f keys/example-root
-  * ssh-keygen -N "" -C user@example.com -f keys/example-user
+  * `ssh-keygen -N "" -C root@example.com -f keys/example-root`
+  * `ssh-keygen -N "" -C user@example.com -f keys/example-user`
 
 Then execute these commands to provision the server:
 
