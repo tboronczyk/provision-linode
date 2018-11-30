@@ -3,8 +3,8 @@ resource "null_resource" "setup" {
         connection {
             type = "ssh"
             user = "root"
-            password = "${var.root_pass}"
             host = "${var.host}"
+            private_key = "${chomp(file(var.root_ssh_privkey))}"
         }
 
         inline = [
@@ -16,7 +16,7 @@ resource "null_resource" "setup" {
             "groups ${var.username} | grep -q sudo || usermod -a -G sudo ${var.username}",
             "[ -f /etc/sudoers.d/${var.username} ] || echo '${var.username} ALL = NOPASSWD : ALL' > /etc/sudoers.d/${var.username}",
             "[ -d /home/${var.username}/.ssh ] || mkdir /home/${var.username}/.ssh",
-            "[ -f /home/${var.username}/.ssh/authorized_keys ] || echo '${file(var.ssh_pubkey)}' > /home/${var.username}/.ssh/authorized_keys",
+            "[ -f /home/${var.username}/.ssh/authorized_keys ] || echo '${chomp(file(var.user_ssh_pubkey))}' > /home/${var.username}/.ssh/authorized_keys",
             "chown -R ${var.username}:${var.username} /home/${var.username}/.ssh",
             "chmod 700 /home/${var.username}/.ssh",
             "chmod 600 /home/${var.username}/.ssh/authorized_keys"
@@ -33,7 +33,7 @@ resource "null_resource" "ansible" {
         environment {
             USERNAME = "${var.username}"
             DOMAIN = "${var.domain}"
-            SSH_PRIVKEY = "${var.ssh_privkey}"
+            SSH_PRIVKEY = "${var.user_ssh_privkey}"
             HOST_IP = "${var.host}"
         }
     }

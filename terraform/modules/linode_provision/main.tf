@@ -3,5 +3,5 @@ resource "linode_instance" "instance" {
     image = "linode/ubuntu18.04"
     region = "us-east"
     type = "g6-nanode-1"
-    root_pass = "${var.root_pass}"
+    authorized_keys = ["${chomp(file(var.root_ssh_pubkey))}"]
 }

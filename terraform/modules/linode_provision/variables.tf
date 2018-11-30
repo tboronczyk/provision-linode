@@ -6,6 +6,6 @@ variable "domain" {
     description = "Domain name to configure"
 }
 
-variable "root_pass" {
-    description = "Root password"
+variable "root_ssh_pubkey" {
+    description = "Public SSH keyfile for root account"
 }

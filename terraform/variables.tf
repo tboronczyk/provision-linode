@@ -10,16 +10,18 @@ variable "username" {
     description = "Username for primary user account"
 }
 
-variable "ssh_privkey" {
-    description = "Private SSH keyfile for user account"
+variable "root_ssh_pubkey" {
+    description = "Public SSH keyfile for root account"
 }
 
-variable "ssh_pubkey" {
+variable "root_ssh_privkey" {
+    description = "Private SSH keyfile for root account"
+}
+
+variable "user_ssh_pubkey" {
     description = "Public SSH keyfile for user account"
 }
 
-resource "random_string" "password" {
-    length = 16
-    special = true
-    override_special = "/@\" "
+variable "user_ssh_privkey" {
+    description = "Private SSH keyfile for user account"
 }
