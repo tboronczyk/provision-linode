@@ -7,6 +7,34 @@
     - deb http://archive.ubuntu.com/ubuntu {{ansible_lsb.codename}}-security universe
     - deb http://archive.ubuntu.com/ubuntu {{ansible_lsb.codename}}-updates universe
 
+- name: Generate a new DH group file - THIS MAY TAKE A LONG TIME
+  command: openssl dhparam -out /etc/ssl/private/dhparams_4096.pem 4096
+  args:
+    creates: /etc/ssl/private/dhparams_4096.pem
+
+- name: Add certbot PPA repository
+  apt_repository:
+    repo: ppa:certbot/certbot
+    state: present
+
+- name: Install certbot
+  apt:
+    name: certbot
+    state: present
+
+- name: Install SSL/TLS certificates
+  command: certbot certonly --standalone -n --agree-tos -m {{username}}@{{domain}} --rsa-key-size 4096 -d {{domain}},www.{{domain}},dev.{{domain}},mail.{{domain}}
+  args:
+    creates: /etc/letsencrypt/live/{{domain}}/
+
+- name: Copy certificate renewal job
+  copy:
+    src: files/cron/renew-certificates
+    dest: /etc/cron.weekly/renew-certificates
+    owner: root
+    group: root
+    mode: 0755
+
 - name: Install Apache
   apt:
     name: apache2
@@ -27,34 +55,6 @@
   apt:
     name: composer
     state: present
-
-- name: Generate a new DH group file - THIS WILL TAKE A LONG TIME
-  command: openssl dhparam -out /etc/ssl/private/dhparams_4096.pem 4096
-  args:
-    creates: /etc/ssl/private/dhparams_4096.pem
-
-- name: Add certbot PPA repository
-  apt_repository:
-    repo: ppa:certbot/certbot
-    state: present
-
-- name: Install certbot
-  apt:
-    name: certbot
-    state: present
-
-- name: Install SSL/TLS certificates
-  command: certbot certonly --standalone -n --agree-tos -m {{username}}@{{domain}} --rsa-key-size 4096 -d {{domain}},www.{{domain}},mail.{{domain}}
-  args:
-    creates: /etc/letsencrypt/live/{{domain}}/
-
-- name: Copy certificate renewal job
-  copy:
-    src: files/cron/renew-certificates
-    dest: /etc/cron.weekly/renew-certificates
-    owner: root
-    group: root
-    mode: 0755
 
 - name: Enable Apache modules
   apache2_module:
