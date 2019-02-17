@@ -19,7 +19,15 @@
     value: "{{item.value}}"
     vtype: "{{item.vtype}}"
   with_items:
-    - { question: "mysql-apt-config/select-server", value: "mysql-8.0", vtype: "string" }
+    - { question: "mysql-apt-config/preview-component", value: "", vtype: "string" }
+    - { question: "mysql-apt-config/repo-distro", value: "ubuntu", vtype: "select" }
+    - { question: "mysql-apt-config/select-preview", value: "Disabled", vtype: "select" }
+    - { question: "mysql-apt-config/select-server", value: "mysql-8.0", vtype: "select" }
+    - { question: "mysql-apt-config/select-tools", value: "Enabled", vtype: "select" }
+    - { question: "mysql-apt-config/unsupported-platform", value: "abort", vtype: "select" }
+    - { question: "mysql-apt-config/repo-url", value: "http://repo.mysql.com/apt", vtype: "string" }
+    - { question: "mysql-apt-config/repo-codename", value: "bionic", vtype: "select" }
+    - { question: "mysql-apt-config/tools-component", value: "mysql-tools", vtype: "string" }
     - { question: "mysql-apt-config/select-product", value: "Ok", vtype: "select" }
 
 - name: Add Oracle MySQL repository

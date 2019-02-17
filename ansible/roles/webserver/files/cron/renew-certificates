@@ -3,5 +3,5 @@
 set -e
 
 certbot renew \
-  --pre-hook="/bin/systemctl stop apache2" \
-  --post-hook="/bin/systemctl start apache2; /bin/systemctl restart dovecot; /bin/systemctl restart postfix"
+  --pre-hook="/bin/systemctl stop nginx" \
+  --post-hook="/bin/systemctl start nginx; /bin/systemctl restart dovecot; /bin/systemctl restart postfix"

@@ -23,7 +23,7 @@
     state: present
 
 - name: Install SSL/TLS certificates
-  command: certbot certonly --standalone -n --agree-tos -m {{username}}@{{domain}} --rsa-key-size 4096 -d {{domain}},www.{{domain}},dev.{{domain}},mail.{{domain}}
+  command: certbot certonly --standalone -n --agree-tos -m {{username}}@{{domain}} --rsa-key-size 4096 -d {{domain}},www.{{domain}},mail.{{domain}}
   args:
     creates: /etc/letsencrypt/live/{{domain}}/
 
@@ -35,20 +35,19 @@
     group: root
     mode: 0755
 
-- name: Install Apache
+- name: Install Nginx
   apt:
-    name: apache2
+    name: nginx
     state: present
 
 - name: Install PHP
   apt:
     name:
-      - php
+      - php-fpm
       - php-curl
       - php-intl
       - php-pdo-mysql
       - php-simplexml
-      - libapache2-mod-php
     state: present
 
 - name: Install Composer
@@ -59,38 +58,18 @@
       - composer
     state: present
 
-- name: Enable Apache modules
-  apache2_module:
-    name: "{{item}}"
-    state: present
-  with_items:
-    - headers
-    - rewrite
-    - ssl
-
-- name: Copy Apache site configuration template
+- name: Copy Nginx site configuration template
   template:
-    src: "templates/apache2/mydomain.conf.j2"
-    dest: "/etc/apache2/sites-available/{{domain}}.conf"
-    owner: root
-    group: root
-    mode: 0644
-
-- name: Copy Apache SSL configuration file
-  copy:
-    src: "files/apache2/ssl.conf"
-    dest: "/etc/apache2/mods-available/ssl.conf"
+    src: "templates/nginx/mydomain.conf.j2"
+    dest: "/etc/nginx/sites-available/{{domain}}.conf"
     owner: root
     group: root
     mode: 0644
 
 - name: Create web directories
   file:
-    path: "{{item}}"
+    path: /var/www/{{domain}}/www/public
     state: directory
-  with_items:
-    - /var/www/{{domain}}/www/public
-    - /var/www/{{domain}}/dev/public
 
 - name: Set web directories ownership and permissions
   file:
@@ -103,23 +82,21 @@
     - { path: "/var/www/{{domain}}", mode: "u=rwX,g=rwXs,o=rX" }
     - { path: "/var/www/{{domain}}/www", mode: "u=rwX,g=rwX,o=rX" }
     - { path: "/var/www/{{domain}}/www/public", mode: "u=rwX,g=rwX,o=rX" }
-    - { path: "/var/www/{{domain}}/dev", mode: "u=rwX,g=rwX,o=rX" }
-    - { path: "/var/www/{{domain}}/dev/public", mode: "u=rwX,g=rwX,o=rX" }
 
-- name: Disable Apache default site
+- name: Disable Nginx default site
   file:
-    path: /etc/apache2/sites-enabled/000-default
+    path: /etc/nginx/sites-enabled/default
     state: absent
 
-- name: Enable Apache site
+- name: Enable Nginx site
   file:
-    src: /etc/apache2/sites-available/{{domain}}.conf
-    dest: /etc/apache2/sites-enabled/{{domain}}.conf
+    src: /etc/nginx/sites-available/{{domain}}.conf
+    dest: /etc/nginx/sites-enabled/{{domain}}.conf
     state: link
 
 - name: Restart installed services
   systemd:
-    name: apache2
+    name: nginx
     enabled: yes
     state: restarted
 
@@ -129,5 +106,5 @@
     rule: allow
     state: enabled
   with_items:
-    - Apache Full
+    - Nginx Full
     - OpenSSH

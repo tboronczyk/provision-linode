@@ -51,7 +51,7 @@ Additional email users can be added with:
 ## What's installed
 
   * Ubuntu (18.04 LTS)
-  * Apache (2.4) - mod_header, mod_ssl, and mod_rewrite enabled
+  * Nginx (1.14)
   * PHP (7.2) - also Composer
   * MySQL (8.0)
   * Let's Encrypt SSL/TLS certificates
@@ -60,6 +60,6 @@ Additional email users can be added with:
   * OpenDKIM (2.11)
   * SpamAssassin (3.4)
 
-Apache configuration scores A+ in SSL Labs grading as of Nov 28, 2018.
+Apache configuration scores A+ in SSL Labs grading as of Feb 17, 2019.
 
 Security audits are welcome.

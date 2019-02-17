@@ -25,13 +25,6 @@ resource "linode_domain_record" "cname-www" {
     target = "${var.domain}"
 }
 
-resource "linode_domain_record" "cname-dev" {
-    domain_id = "${linode_domain.domain.id}"
-    record_type = "CNAME"
-    name = "dev"
-    target = "${var.domain}"
-}
-
 resource "linode_domain_record" "cname-mail" {
     domain_id = "${linode_domain.domain.id}"
     record_type = "CNAME"

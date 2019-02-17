@@ -1,0 +1,39 @@
+server {
+	listen 80 default_server;
+	listen [::]:80 default_server;
+
+	server_name _;
+
+	return 301 https://$host$request_uri;
+}
+
+server {
+	listen 443 default_server ssl http2;
+	listen [::]:443 default_server ssl http2;
+
+	server_name {{domain}} www.{{domain}};
+
+	ssl_certificate /etc/letsencrypt/live/{{domain}}/fullchain.pem;
+	ssl_certificate_key /etc/letsencrypt/live/{{domain}}/privkey.pem;
+	ssl_dhparam /etc/ssl/private/dhparams_4096.pem;
+
+	ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
+	ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305-OLD:ECDHE-RSA-AES256-SHA;
+
+	root /var/www/{{domain}}/www/public;
+	index index.php index.html;
+
+	location / {
+		try_files $uri $uri/ =404;
+	}
+
+	location ~ \.php$ {
+		include snippets/fastcgi-php.conf;
+		fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
+	}
+
+	add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
+	add_header X-Frame-Options DENY;
+	add_header X-Content-Type-Options nosniff;
+	add_header X-XSS-Protection "1; mode=block";
+}
