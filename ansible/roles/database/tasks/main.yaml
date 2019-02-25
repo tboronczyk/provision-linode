@@ -32,7 +32,7 @@
 
 - name: Add Oracle MySQL repository
   apt:
-    deb: https://dev.mysql.com/get/mysql-apt-config_0.8.10-1_all.deb
+    deb: https://dev.mysql.com/get/mysql-apt-config_0.8.12-1_all.deb
     state: present
 
 - name: Install MySQL
