@@ -60,6 +60,6 @@ Additional email users can be added with:
   * OpenDKIM (2.11)
   * SpamAssassin (3.4)
 
-Apache configuration scores A+ in SSL Labs grading as of Feb 17, 2019.
+Nginx configuration scores A+ in SSL Labs grading as of Feb 17, 2019.
 
 Security audits are welcome.
